@@ -14,14 +14,13 @@ import { Link } from "react-router-dom";
 import { FaCartShopping } from "react-icons/fa6";
 
 const BookCard = ({ headline, books }) => {
-  console.log(books);
   return (
     <div className="my-16 px-4 lg:px-24">
       <h2 className="text-5xl text-center text-black font-bold my-5">
         {headline}
       </h2>
       {/* cards  */}
-      <div className="mt-12">
+      <div className="mt-12 ">
         <Swiper
           slidesPerView={1}
           spaceBetween={10}
@@ -49,12 +48,16 @@ const BookCard = ({ headline, books }) => {
             <SwiperSlide key={book._id}>
               <Link to={`/book/${book._id}`}>
                 <div className="relative">
-                  <img src={book.imageURL} alt="image" />
+                  <img
+                    src={book.imageURL}
+                    alt="image"
+                    className="rounded-t-lg"
+                  />
                   <div className="absolute top-3 right-3 bg-blue-600 hover:bg-black p-2 rounded">
                     <FaCartShopping className="w-4 h-4 text-white" />
                   </div>
                 </div>
-                <div>
+                <div className="bg-teal-100 rounded-b-lg pl-3 py-3 text-black font-bold">
                   <div>
                     <h3>{book.bookTitle}</h3>
                     <p>{book.authorName}</p>

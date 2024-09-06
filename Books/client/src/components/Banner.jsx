@@ -23,7 +23,7 @@ const Banner = () => {
               name="search"
               id="search"
               placeholder="Search a book"
-              className="py-2 px-4 rounded-s-sm outline-none"
+              className="py-2 px-4 rounded-s-sm outline-none border-none"
             />
             <button className="bg-blue-700 px-6 py-2 text-white font-medium hover:bg-black transition-all ease-in duration-200">
               Search
