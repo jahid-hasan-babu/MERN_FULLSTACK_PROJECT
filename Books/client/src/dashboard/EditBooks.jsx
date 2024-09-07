@@ -1,7 +1,7 @@
 import React from "react";
 
 const EditBooks = () => {
-  return <div>e</div>;
+  return <div>Jahid</div>;
 };
 
 export default EditBooks;
