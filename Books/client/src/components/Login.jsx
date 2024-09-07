@@ -5,7 +5,7 @@ import googleLogo from "../assets/google-logo.svg";
 
 const Login = () => {
   const { login, loginWithGoogle } = useContext(AuthContext);
-  const [error, setError] = useState("error");
+  const [error, setError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -53,7 +53,7 @@ const Login = () => {
         <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
           <div className="max-w-md mx-auto">
             <div>
-              <h1 className="text-2xl font-semibold">Sign up Form </h1>
+              <h1 className="text-2xl font-semibold">Log in Form </h1>
             </div>
             <div className="divide-y divide-gray-200">
               <form
@@ -78,6 +78,15 @@ const Login = () => {
                     placeholder="Password"
                   />
                 </div>
+
+                {error ? (
+                  <p className="text-red-600 text-base">
+                    Email or Password is not Correct:
+                  </p>
+                ) : (
+                  ""
+                )}
+
                 <p>
                   If you haven`t an account. Please{" "}
                   <Link to="/sign-up" className="text-blue-600 underline">
@@ -87,7 +96,7 @@ const Login = () => {
                 </p>
                 <div className="relative">
                   <button className="bg-blue-500 text-white rounded-md px-6 py-2">
-                    Sign up
+                    Log in
                   </button>
                 </div>
               </form>
