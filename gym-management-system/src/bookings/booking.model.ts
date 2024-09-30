@@ -1,22 +1,21 @@
-import { Schema, model, Document } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-export interface IBooking extends Document {
-  traineeId: Schema.Types.ObjectId; // ObjectId type for reference
-  scheduleId: Schema.Types.ObjectId;
-  bookingTime: Date;
+export interface ISchedule extends Document {
+  className: string;
+  date: Date;
+  timeSlot: string;
+  maxSlots: number;
+  bookedSlots: number;
+  trainees: mongoose.Types.ObjectId[];
 }
 
-const BookingSchema = new Schema<IBooking>(
-  {
-    traineeId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    scheduleId: {
-      type: Schema.Types.ObjectId,
-      ref: "ClassSchedule",
-      required: true,
-    },
-    bookingTime: { type: Date, default: Date.now },
-  },
-  { timestamps: true, versionKey: false } // Automatically manage createdAt and updatedAt
-);
+const scheduleSchema = new Schema<ISchedule>({
+  className: { type: String, required: true },
+  date: { type: Date, required: true },
+  timeSlot: { type: String, required: true },
+  maxSlots: { type: Number, default: 10 },
+  bookedSlots: { type: Number, default: 0 },
+  trainees: [{ type: mongoose.Types.ObjectId, ref: "Trainee" }],
+});
 
-export default model<IBooking>("Booking", BookingSchema);
+export const Schedule = mongoose.model<ISchedule>("Schedule", scheduleSchema);

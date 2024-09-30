@@ -1,49 +1,40 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const booking_model_1 = __importDefault(require("./booking.model"));
-const class_model_1 = __importDefault(require("../classSchedule/class.model")); // Assuming this exists
+exports.BookingService = void 0;
+const booking_model_1 = require("./booking.model");
 class BookingService {
-    // Method to create a booking
-    async bookClass(data) {
-        // Find the class schedule
-        const schedule = await class_model_1.default.findById(data.scheduleId);
-        if (!schedule) {
-            throw new Error("Class schedule not found.");
+    async bookClass(scheduleId, traineeId) {
+        const schedule = await booking_model_1.Schedule.findById(scheduleId);
+        if (!schedule)
+            throw new Error("Schedule not found");
+        if (schedule.bookedSlots >= schedule.maxSlots) {
+            throw new Error("Class schedule is full. Maximum 10 trainees allowed per schedule.");
         }
-        // Check if the class schedule has available slots
-        if (schedule.trainees.length >= schedule.maxTrainees) {
-            throw new Error("No available slots in this class.");
-        }
-        // Add trainee to the schedule
-        schedule.trainees.push(traineeId);
-        await schedule.save();
-        // Create a new booking document
-        const booking = new booking_model_1.default({
-            traineeId: data.traineeId,
-            scheduleId: data.scheduleId,
-            bookingTime: new Date(),
+        const hasBooking = await booking_model_1.Schedule.findOne({
+            trainees: traineeId,
+            date: schedule.date,
+            timeSlot: schedule.timeSlot,
         });
-        return await booking.save(); // Save and return the booking
+        if (hasBooking) {
+            throw new Error("Userhas already booked a class in this time slot.");
+        }
+        schedule.trainees.push(traineeId);
+        schedule.bookedSlots += 1;
+        await schedule.save();
+        return schedule;
     }
-    // Method to cancel a booking
-    async cancelBooking(bookingId) {
-        // Find the booking by its ID
-        const booking = await booking_model_1.default.findById(bookingId);
-        if (!booking) {
-            throw new Error("Booking not found.");
+    async cancelBooking(scheduleId, traineeId) {
+        const schedule = await booking_model_1.Schedule.findById(scheduleId);
+        if (!schedule)
+            throw new Error("Schedule not found");
+        const traineeIndex = schedule.trainees.indexOf(traineeId);
+        if (traineeIndex === -1) {
+            throw new Error("Trainee has no booking for this class.");
         }
-        // Find the class schedule associated with the booking
-        const schedule = await class_model_1.default.findById(booking.scheduleId);
-        if (schedule) {
-            // Remove the trainee from the class schedule
-            schedule.trainees = schedule.trainees.filter((traineeId) => !traineeId.equals(booking.traineeId));
-            await schedule.save(); // Save the updated schedule
-        }
-        // Delete the booking from the database
-        await booking_model_1.default.findByIdAndDelete(bookingId);
+        schedule.trainees.splice(traineeIndex, 1);
+        schedule.bookedSlots -= 1;
+        await schedule.save();
+        return schedule;
     }
 }
-exports.default = new BookingService();
+exports.BookingService = BookingService;
